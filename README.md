@@ -75,7 +75,9 @@ If Dice drops below >0.4 or centroid offset exceeds 30mm the pipeline prints a w
 
 ## Validation
 
-No patient data yet, so I validated on synthetic data, two ellipsoids where one is shifted and tilted by a known amount to the other.
+Due to limited availability of publicly accessible paired pre-operative and post-operative hip CT datasets, the registration pipeline was validated using synthetic rigid transformations applied to known geometries, they allowed verification of rotation recovery accuracy, translation recovery accuracy, and metric consistency under defined ground-truth conditions.
+
+Validation on real clinical THA CT datasets is currently in progress.
 
 Three test cases are available in the GUI:
 
