@@ -117,3 +117,14 @@ Covers: registered mask not empty, rotation recovered within 1° of ground truth
 Registration uses Mattes mutual information (MMI) rather than mean squares, it handles intensity differences between pre and post-op scans better. The 3-level pyramid (4x → 2x → 1x) helps avoid local minima before refining at full resolution.
 
 The implant region in the 3D overlay is `postop AND NOT registered_preop`. On real data this approximates where the prosthesis sits, though it also picks up bone remodeling and positioning differences.
+
+## Example Results
+
+### 3D Overlay
+![3D overlay](Images/overlay_3d.png)
+
+### Slice Overlay
+![Slice overlay](Images/slice_overlay.png)
+
+### Metrics Output
+![Metrics](Images/metrics_example.png)
