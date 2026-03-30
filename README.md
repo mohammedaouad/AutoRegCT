@@ -8,7 +8,7 @@ Given a pre-op and post-op CT from the same THA patient, AutoRegCT segments the 
 
 ## What it does
 
-1. Loads pre-op and post-op CT — DICOM folder or NIfTI file
+1. Loads pre-op and post-op CT; DICOM folder or NIfTI file
 2. Segments the femur using TotalSegmentator
 3. Rigidly registers the pre-op femur to post-op space (SimpleITK, Mattes mutual information, 3-level pyramid)
 4. Computes 7 positioning metrics from the aligned masks
