@@ -156,8 +156,15 @@ if run:
         with tempfile.TemporaryDirectory() as tmp:
             slice_path = os.path.join(tmp, "slices.png")
             overlay_path = os.path.join(tmp, "overlay.png")
-            visualize_slices(preop, postop_reg, registered, output_path=slice_path, show=False)
-            visualize_overlay(preop, postop_reg, registered, metrics=metrics, output_path=overlay_path, show=False)
+            # binarize postop_reg before visualization as artifact intensities above 1 break the overlay
+            postop_vis = sitk.BinaryThreshold(
+                sitk.Cast(postop_reg, sitk.sitkFloat32),
+                lowerThreshold=0.5, upperThreshold=100.0,
+                insideValue=1, outsideValue=0
+            )
+            postop_vis = sitk.Cast(postop_vis, sitk.sitkUInt8)
+            visualize_slices(preop, postop_vis, registered, output_path=slice_path, show=False)
+            visualize_overlay(preop, postop_vis, registered, metrics=metrics, output_path=overlay_path, show=False)
 
             st.subheader("Slice Overlay")
             st.image(slice_path, use_container_width=True)
