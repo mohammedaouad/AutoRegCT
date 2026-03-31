@@ -1,8 +1,8 @@
 # AutoRegCT
 
-Two years ago, during the practical project for my bachelor thesis, I spent a lot of time processing hip CT scans by hand in 3D Slicer and ImFusion. Segmenting the femur manually, aligning pre-op and post-op scans, reading off measurements one by one. Even for a single patient it took 20-30 minutes, and the results shifted depending on how carefully you did each step. This project automates that.
+Two years ago, during the practical project for my bachelor thesis, I spent a lot of time processing hip CT scans by hand in 3D Slicer and ImFusion. Segmenting the femur manually, aligning pre-op and post-op scans, even for a single patient it took 25 to 30 minutes, and the results shifted depending on how carefully you did each step. This project automates that.
 
-One thing that made it harder was the metal artifacts in the post-op scans. The implant causes streak artifacts that corrupt the image around the femur, and I had to use the scissors tool in 3D Slicer to remove them manually before segmentation. It was never perfect. That's part of why I added a metal artifact simulation to the validation — to see how the registration holds up when the image is already corrupted.
+One thing that made it harder was the metal artifacts in the post-op scans. The implant causes streak artifacts that corrupt the image around the femur, and I had to use the scissors tool in 3D Slicer to remove them manually before segmentation. It was never perfect, that's part of why I added a metal artifact simulation to the validation to see how the registration holds up when the image is already corrupted.
 
 Given a pre-op and post-op CT from the same THA patient, AutoRegCT segments the femur from both scans, registers the pre-op bone into the post-op space, and computes implant positioning metrics without any manual steps.
 
@@ -10,7 +10,7 @@ Given a pre-op and post-op CT from the same THA patient, AutoRegCT segments the 
 
 ## What it does
 
-1. Loads pre-op and post-op CT — DICOM folder or NIfTI file
+1. Loads pre-op and post-op CT: DICOM folder or NIfTI file
 2. Segments the femur using TotalSegmentator
 3. Rigidly registers the pre-op femur to post-op space (SimpleITK, Mattes mutual information, 3-level pyramid)
 4. Computes 7 positioning metrics from the aligned masks
@@ -26,7 +26,7 @@ git clone https://github.com/mohammedaouad/AutoRegCT.git
 cd AutoRegCT
 ```
 
-**Windows** — just double-click `launch.bat`. It creates a virtual environment, installs everything, and opens the GUI. First run takes a few minutes.
+**Windows**: just double-click `launch.bat`. It creates a virtual environment, installs everything, and opens the GUI. First run takes a few minutes.
 
 **Manual:**
 ```bash
@@ -49,7 +49,7 @@ python scripts/run_pipeline.py \
 
 | Flag | Description |
 |---|---|
-| `--side` | `left` or `right` — required |
+| `--side` | `left` or `right`|
 | `--fast` | TotalSegmentator fast mode, lower accuracy but much quicker |
 | `--device` | `cpu` or `gpu` |
 | `--skip-seg` | Reuse existing masks from a previous run |
@@ -77,16 +77,16 @@ If Dice drops below 0.4 or centroid offset exceeds 30mm the pipeline prints a wa
 
 ## Validation
 
-No public pre/post-op THA CT dataset was available, so I validated on synthetic data — ellipsoids with known transformations applied. Four test cases are available in the GUI:
+No public pre/post-op THA CT dataset was available, so I validated on synthetic data, two ellipsoids with known transformations applied. Four test cases are available in the GUI:
 
 | Case | Setup | Result |
 |---|---|---|
 | Standard THA | 8° rotation, 3mm offset | Transform rotation recovered: 8.03°, stem axis angle: 0.91° |
 | Severe malrotation | 20° rotation, 8mm offset | Transform rotation recovered: 17.95°, optimizer still converged |
-| Bone resection | 5° rotation, larger pre-op femur | Dice 0.59 — lower because the shapes changed, not the registration |
-| Metal artifacts | 8° rotation + streak artifacts on post-op | Transform rotation recovered: 7.56°, Dice 0.87 — registration held up |
+| Bone resection | 5° rotation, larger pre-op femur | Dice 0.59; lower because the shapes changed, not the registration |
+| Metal artifacts | 8° rotation + streak artifacts on post-op | Transform rotation recovered: 7.56°, Dice 0.87; registration held up |
 
-The metal artifact case came from a real problem. In my thesis work, post-op CT scans had streak artifacts around the implant that I had to remove manually with the scissors tool in 3D Slicer before segmentation. It was never perfectly clean. The artifact simulation here mimics that — high intensity spikes radiating from the implant center — and the registration still converged cleanly using Mattes mutual information, which handles intensity corruption better than mean squares.
+The metal artifact case came from a real problem. In my thesis work, post-op CT scans had streak artifacts around the implant that I had to remove manually with the scissors tool in 3D Slicer before segmentation. It was never perfectly clean. The artifact simulation here mimics that high intensity spikes radiating from the implant center and the registration still converged cleanly using Mattes mutual information, which handles intensity corruption better than mean squares.
 
 Real CT validation is in progress using private THA data.
 
@@ -103,12 +103,12 @@ Covers: registered mask not empty, rotation recovered within 1° of ground truth
 
 ## Stack
 
-- **SimpleITK** — image I/O, resampling, rigid registration
-- **TotalSegmentator** — femur segmentation (nnU-Net)
-- **NumPy / SciPy** — SVD axis fitting, rotation math
-- **scikit-image** — marching cubes for 3D mesh rendering
-- **Matplotlib** — slice overlay and 3D visualization
-- **Streamlit** — local browser GUI
+- **SimpleITK**: image I/O, resampling, rigid registration
+- **TotalSegmentator**: femur segmentation (nnU-Net)
+- **NumPy / SciPy**: SVD axis fitting, rotation math
+- **scikit-image**: marching cubes for 3D mesh rendering
+- **Matplotlib**: slice overlay and 3D visualization
+- **Streamlit**: local browser GUI
 
 ---
 
